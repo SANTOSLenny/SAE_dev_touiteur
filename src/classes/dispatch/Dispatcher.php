@@ -4,7 +4,8 @@ namespace iutnc\touiteur\dispatch;
 
 use iutnc\touiteur\actions\DefaultAction;
 use iutnc\touiteur\actions\ConsulterTagAction;
-use iutnc\touiteur\actions\SuivreAction; // Ajout de l'action d'Ange
+use iutnc\touiteur\actions\ConnexionAction;
+use iutnc\touiteur\actions\SuivreAction; 
 
 class Dispatcher {
 
@@ -20,14 +21,19 @@ class Dispatcher {
         switch($this->action){       
             case "consulter-tag":
                 $action = new ConsulterTagAction();
+                break;    
+            case "connexion":
+                $action = new ConnexionAction();
                 break;
-            case "suivre": // Ajout de la route d'Ange
+            case "suivre": 
                 $action = new SuivreAction();
                 break;
             case "default":
+                
             default:
                 $action = new DefaultAction();
                 break;
+
         }
 
         $html = $action->execute();
@@ -36,7 +42,7 @@ class Dispatcher {
     }
 
     private function renderPage(string $html): void {
-
+        $infoUser = isset($_SESSION['user_pseudo']) ? " | Utilisateur actif : <strong>" . $_SESSION['user_pseudo'] . "</strong>" : "";
         $page = <<<HTML
         <!DOCTYPE html>
         <html lang="fr">
@@ -52,6 +58,8 @@ class Dispatcher {
 
             <nav>
                 <a href="?action=default">Accueil</a>
+                <a href="?action=connexion">Choisir un utilisateur</a>
+                <span>$infoUser</span>
             </nav>
 
             <main>
