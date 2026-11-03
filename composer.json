@@ -1,0 +1,8 @@
+{
+    "name": "iutnc/touiteur",
+    "autoload": {
+        "psr-4": {
+            "iutnc\\touiteur\\": "src/classes/"
+        }
+    }
+}
