@@ -4,8 +4,9 @@ namespace iutnc\touiteur\dispatch;
 
 use iutnc\touiteur\actions\DefaultAction;
 use iutnc\touiteur\actions\ConsulterTagAction;
+use iutnc\touiteur\actions\SuivreAction; // Ajout de l'action d'Ange
 
-class Dispatcher{
+class Dispatcher {
 
     private string $action;
 
@@ -14,11 +15,14 @@ class Dispatcher{
         $this->action = $_GET["action"] ?? "default";
     }
 
-    public function run(): void{
+    public function run(): void {
 
         switch($this->action){       
             case "consulter-tag":
                 $action = new ConsulterTagAction();
+                break;
+            case "suivre": // Ajout de la route d'Ange
+                $action = new SuivreAction();
                 break;
             case "default":
             default:
