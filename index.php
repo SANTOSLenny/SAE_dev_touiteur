@@ -2,6 +2,7 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use iutnc\touiteur\dispatch\Dispatcher;
+use iutnc\touiteur\repository\TouiteurRepository;
 
 session_start();
 

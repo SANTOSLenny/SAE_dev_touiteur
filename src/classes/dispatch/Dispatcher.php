@@ -5,8 +5,9 @@ namespace iutnc\touiteur\dispatch;
 use iutnc\touiteur\actions\DefaultAction;
 use iutnc\touiteur\actions\ConsulterTagAction;
 use iutnc\touiteur\actions\ConnexionAction;
+use iutnc\touiteur\actions\SuivreAction; 
 
-class Dispatcher{
+class Dispatcher {
 
     private string $action;
 
@@ -15,7 +16,7 @@ class Dispatcher{
         $this->action = $_GET["action"] ?? "default";
     }
 
-    public function run(): void{
+    public function run(): void {
 
         switch($this->action){       
             case "consulter-tag":
@@ -23,6 +24,9 @@ class Dispatcher{
                 break;    
             case "connexion":
                 $action = new ConnexionAction();
+                break;
+            case "suivre": 
+                $action = new SuivreAction();
                 break;
             case "default":
                 

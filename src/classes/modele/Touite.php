@@ -6,16 +6,16 @@ class Touite {
 
     protected int $id;
     protected string $texte;
-    protected Utilisateur $auteur;
+    protected int $uid;
     protected string $date;
 
-    public function __construct(int $id, string $texte, string $auteur, string $date) {
+    public function __construct(int $id, string $texte, int $uid, string $date) {
         if (mb_strlen($texte) > 235) {
             throw new \Exception("Le touite dépasse 235 caractères.");
         }
         $this->id = $id;
         $this->texte = $texte;
-        $this->auteur = $auteur;
+        $this->uid = $uid;
         $this->date = $date;
     }
 
@@ -27,8 +27,8 @@ class Touite {
         return $this->texte;
     }
 
-    public function getAuteur(): Utilisateur {
-        return $this->auteur; 
+    public function getUid(): string {
+        return $this->uid;
     }
 
     public function getDate(): string {
