@@ -20,7 +20,11 @@ class Dispatcher{
         default:
             $action = new DefaultAction();
             break;
+        case "add-touite":
+            $action = new \iutnc\touiteur\actions\AddTouiteAction();
+            break;
     }
+
 
     $html = $action->execute();
 
@@ -44,6 +48,7 @@ private function renderPage(string $html): void {
 
         <nav>
             <a href="?action=default">Accueil</a>
+            <a href="?action=add-touite">Publier un Touite</a>
         </nav>
 
         <main>
