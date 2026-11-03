@@ -35,17 +35,15 @@ private function renderPage(string $html): void {
 
     <head>
         <meta charset="UTF-8">
-        <title>Deefy</title>
+        <title>Touiteur</title>
     </head>
 
     <body>
 
-        <h1>Deefy</h1>
+        <h1>Touiteur</h1>
 
         <nav>
             <a href="?action=default">Accueil</a>
-            <a href="?action=add-user">Inscription</a>
-            <a href="?action=add-playlist">Créer une playlist</a>
         </nav>
 
         <main>
