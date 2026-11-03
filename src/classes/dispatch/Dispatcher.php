@@ -3,8 +3,11 @@
 namespace iutnc\touiteur\dispatch;
 
 use iutnc\touiteur\actions\DefaultAction;
+use iutnc\touiteur\actions\ConsulterTagAction;
+use iutnc\touiteur\actions\SuivreAction; // Ajout de l'action d'Ange
+use iutnc\touiteur\actions\AddTouiteAction;
 
-class Dispatcher{
+class Dispatcher {
 
     private string $action;
 
@@ -13,52 +16,53 @@ class Dispatcher{
         $this->action = $_GET["action"] ?? "default";
     }
 
-    public function run(): void{
+    public function run(): void {
+        switch($this->action){
+            case "consulter-tag":
+                $action = new ConsulterTagAction();
+                break;
+            case "suivre":
+                $action = new SuivreAction();
+                break;
+            case "add-touite":
+                $action = new AddTouiteAction();
+                break;
+            case "default":
+            default:
+                $action = new DefaultAction();
+                break;
+        }
 
-    switch($this->action){       
-        case "default":
-        default:
-            $action = new DefaultAction();
-            break;
-        case "add-touite":
-            $action = new \iutnc\touiteur\actions\AddTouiteAction();
-            break;
+        $html = $action->execute();
+        $this->renderPage($html);
     }
-
-
-    $html = $action->execute();
-
-    $this->renderPage($html);
-    }
-
 private function renderPage(string $html): void {
 
     $page = <<<HTML
-    <!DOCTYPE html>
-    <html lang="fr">
+        <!DOCTYPE html>
+        <html lang="fr">
 
-    <head>
-        <meta charset="UTF-8">
-        <title>Touiteur</title>
-    </head>
+        <head>
+            <meta charset="UTF-8">
+            <title>Touiteur</title>
+        </head>
 
-    <body>
+        <body>
 
-        <h1>Touiteur</h1>
+            <h1>Touiteur</h1>
 
-        <nav>
-            <a href="?action=default">Accueil</a>
-            <a href="?action=add-touite">Publier un Touite</a>
-        </nav>
+            <nav>
+                <a href="?action=default">Accueil</a>
+            </nav>
 
-        <main>
-            $html
-        </main>
+            <main>
+                $html
+            </main>
 
-    </body>
-    </html>
-    HTML;
+        </body>
+        </html>
+        HTML;
 
-    echo $page;
-}
+        echo $page;
+    }
 }
