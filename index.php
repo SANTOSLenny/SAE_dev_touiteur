@@ -12,4 +12,5 @@ TouiteurRepository::setConfig(
 );
 
 $dispatcher = new Dispatcher();
+\iutnc\touiteur\db\ConnectionFactory::setConfig(__DIR__ . '/src/config/touiteur.db.ini');
 $dispatcher->run();
