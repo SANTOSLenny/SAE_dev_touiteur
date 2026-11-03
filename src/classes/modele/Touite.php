@@ -6,7 +6,7 @@ class Touite {
 
     protected int $id;
     protected string $texte;
-    protected string $auteur;
+    protected Utilisateur $auteur;
     protected string $date;
 
     public function __construct(int $id, string $texte, string $auteur, string $date) {
@@ -27,8 +27,8 @@ class Touite {
         return $this->texte;
     }
 
-    public function getAuteur(): string {
-        return $this->auteur;
+    public function getAuteur(): Utilisateur {
+        return $this->auteur; 
     }
 
     public function getDate(): string {
