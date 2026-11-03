@@ -10,6 +10,9 @@ class Touite {
     protected string $date;
 
     public function __construct(int $id, string $texte, string $auteur, string $date) {
+        if (mb_strlen($texte) > 235) {
+            throw new \Exception("Le touite dépasse 235 caractères.");
+        }
         $this->id = $id;
         $this->texte = $texte;
         $this->auteur = $auteur;
