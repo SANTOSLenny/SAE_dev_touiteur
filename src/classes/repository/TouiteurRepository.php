@@ -147,4 +147,36 @@ class TouiteurRepository {
 
         return $res;
     }
+
+    public function voter(int $uid, int $idTouite, int $valeur): bool {
+
+        if ($valeur !== 1 && $valeur !== -1) {
+            return false;
+        }
+
+        $requete = $this->pdo->prepare(
+            "SELECT COUNT(*) FROM vote WHERE id_utilisateur = :uid AND id_touite = :touite"
+        );
+
+        $requete->execute([
+            "uid" => $uid,
+            "touite" => $idTouite
+        ]);
+
+        if ($requete->fetchColumn() > 0) {
+            return false;
+        }
+
+        $requete = $this->pdo->prepare(
+            "INSERT INTO vote (id_utilisateur, id_touite, valeur) VALUES (:uid, :touite, :valeur)"
+        );
+
+        $requete->execute([
+            "uid" => $uid,
+            "touite" => $idTouite,
+            "valeur" => (string) $valeur
+        ]);
+
+        return true;
+    }
 }

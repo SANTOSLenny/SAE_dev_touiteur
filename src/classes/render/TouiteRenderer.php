@@ -27,6 +27,15 @@ class TouiteRenderer {
                 $texteFormate = preg_replace('/#(\w+)/', '<a href="?action=consulter-tag&tag=$1">#$1</a>', $texteBrut);
                 
                 $html .= "<p>" . $texteFormate . "</p>";
+                if (isset($_SESSION["user_id"])) {
+                    $idTouite = $this->touite->getId();
+
+                    $html .= '<form action="?action=voter" method="POST">';
+                    $html .= '<input type="hidden" name="id_touite" value="'. $idTouite . '">';
+                    $html .= '<button type="submit" name="valeur" value="1">Like +1</button>';
+                    $html .= '<button type="submit" name="valeur" value="-1">Dislike -1</button>';
+                    $html .= '</form>';
+                }
                 $html .= "</div>";
                 
                 return $html;
