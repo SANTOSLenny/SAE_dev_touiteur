@@ -124,4 +124,27 @@ class TouiteurRepository {
         
         return $id_touite;
     }
+
+    public function getTouitesByUser(int $uid) : array{
+
+        $requete = $this->pdo->prepare("SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo as auteur from touite t inner join utilisateur u on t.id_auteur = u.id WHERE t.id_auteur = :uid ORDER BY t.date desc, t.id desc");
+
+        $requete->execute([
+            "uid" => $uid
+        ]);
+
+        $res = [];
+
+        while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
+
+            $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"]);
+
+            $res[] = [
+                "touite" => $touite,
+                "auteur" => $ligne["auteur"]
+            ];
+        }
+
+        return $res;
+    }
 }
