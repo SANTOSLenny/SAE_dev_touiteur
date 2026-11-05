@@ -7,6 +7,7 @@ use iutnc\touiteur\actions\ConsulterTagAction;
 use iutnc\touiteur\actions\ConnexionAction;
 use iutnc\touiteur\actions\SuivreAction; 
 use iutnc\touiteur\actions\ConsulterUtilisateurAction;
+use iutnc\touiteur\actions\VoterAction;
 
 class Dispatcher {
 
@@ -31,6 +32,9 @@ class Dispatcher {
                 break;
             case "consulter-utilisateur":
                 $action = new ConsulterUtilisateurAction();
+                break;
+            case "voter":
+                $action = new VoterAction();
                 break;
             case "default":
                 
