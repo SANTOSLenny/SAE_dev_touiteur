@@ -6,6 +6,7 @@ use iutnc\touiteur\actions\DefaultAction;
 use iutnc\touiteur\actions\ConsulterTagAction;
 use iutnc\touiteur\actions\ConnexionAction;
 use iutnc\touiteur\actions\SuivreAction; 
+use iutnc\touiteur\actions\ConsulterUtilisateurAction;
 
 class Dispatcher {
 
@@ -27,6 +28,9 @@ class Dispatcher {
                 break;
             case "suivre": 
                 $action = new SuivreAction();
+                break;
+            case "consulter-utilisateur":
+                $action = new ConsulterUtilisateurAction();
                 break;
             case "default":
                 

@@ -18,8 +18,10 @@ class TouiteRenderer {
 
         switch($selecteur){
             default:
+
+                $uid = $this->touite->getUid();
                 $html = '<div class="touite">';
-                $html .= "<h3>" . $this->auteur . "</h3>";
+                $html .= '<h3><a href="?action=consulter-utilisateur&uid=' . $uid . '">' . $this->auteur . '</a></h3>';
                 
                 $texteBrut = $this->touite->getTexte();
                 $texteFormate = preg_replace('/#(\w+)/', '<a href="?action=consulter-tag&tag=$1">#$1</a>', $texteBrut);
