@@ -181,4 +181,16 @@ class TouiteurRepository {
 
         return true;
     }
+
+
+    public function estSuivi(int $idSuiveur, int $idSuivi): bool {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM suivi_utilisateur WHERE id_suiveur = :suiveur AND id_suivi = :suivi"
+        );
+        $stmt->execute([
+            'suiveur' => $idSuiveur,
+            'suivi' => $idSuivi
+        ]);
+        return (bool) $stmt->fetch();
+    }
 }

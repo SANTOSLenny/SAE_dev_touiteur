@@ -40,7 +40,12 @@ class SuivreAction extends Action {
                 return "<p>succes : vous suivez l'auteur (ID: $idAuteurASuivre).</p>
                         <a href='?action=default'>Retour à l'accueil</a>";
             } else {
-                return "<p>Information : Vous suivez déjà cet auteur.</p>
+                $delete = $db->prepare("DELETE FROM suivi_utilisateur WHERE id_suiveur = :suiveur AND id_suivi = :suivi");
+                $delete->execute([
+                    'suiveur' => $idUtilisateurConnecte,
+                    'suivi' => $idAuteurASuivre
+                ]);
+                return "<p>Succes : vous ne suivez plus cet auteur (ID: $idAuteurASuivre).</p>
                         <a href='?action=default'>Retour à l'accueil</a>";
             }
         }
