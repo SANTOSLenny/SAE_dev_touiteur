@@ -2,11 +2,14 @@
 
 namespace iutnc\touiteur\actions;
 
+use iutnc\touiteur\db\ConnectionFactory;
+
 class SuivreAction extends Action {
 
     public function execute(): string {
         if (!isset($_SESSION['user_id'])) {
-            return "<p>Erreur : Vous devez être connecté pour suivre un utilisateur.</p>";
+            return "<p>Erreur : Vous devez être connecté pour suivre un utilisateur.</p>
+                    <a href='?action=connexion'>Se connecter</a>";
         }
 
         if (isset($_GET['id_auteur'])) {
@@ -14,18 +17,29 @@ class SuivreAction extends Action {
             $idAuteurASuivre = (int) $_GET['id_auteur'];
 
             if ($idUtilisateurConnecte === $idAuteurASuivre) {
-                return "<p>Erreur : Vous ne pouvez pas vous suivre vous-même.</p>";
+                return "<p>Erreur : vous ne pouvez pas vous suivre vous meme</p>
+                        <a href='?action=default'>Retour à l'accueil</a>";
             }
 
-            if (!isset($_SESSION['abonnements'][$idUtilisateurConnecte])) {
-                $_SESSION['abonnements'][$idUtilisateurConnecte] = [];
-            }
+            $db = ConnectionFactory::makeConnection();
 
-            if (!in_array($idAuteurASuivre, $_SESSION['abonnements'][$idUtilisateurConnecte])) {
-                $_SESSION['abonnements'][$idUtilisateurConnecte][] = $idAuteurASuivre;
-                return "<p>Succès : Vous suivez désormais l'auteur (ID: $idAuteurASuivre).</p>";
+            $stmt = $db->prepare("SELECT * FROM suivi_utilisateur WHERE id_suiveur = :suiveur AND id_suivi = :suivi");
+            $stmt->execute([
+                'suiveur' => $idUtilisateurConnecte,
+                'suivi' => $idAuteurASuivre
+            ]);
+
+            if (!$stmt->fetch()) {
+                $insert = $db->prepare("INSERT INTO suivi_utilisateur (id_suiveur, id_suivi) VALUES (:suiveur, :suivi)");
+                $insert->execute([
+                    'suiveur' => $idUtilisateurConnecte,
+                    'suivi' => $idAuteurASuivre
+                ]);
+                return "<p>succes : vous suivez l'auteur (ID: $idAuteurASuivre).</p>
+                        <a href='?action=default'>Retour à l'accueil</a>";
             } else {
-                return "<p>Information : Vous suivez déjà cet auteur.</p>";
+                return "<p>Information : Vous suivez déjà cet auteur.</p>
+                        <a href='?action=default'>Retour à l'accueil</a>";
             }
         }
 
