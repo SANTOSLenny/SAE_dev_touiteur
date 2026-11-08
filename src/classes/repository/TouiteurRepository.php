@@ -55,7 +55,9 @@ class TouiteurRepository {
             $touite = new Touite((int) $ligne["id"],$ligne["texte"],(int) $ligne["id_auteur"],$ligne["date"]);
 
             $resultat[] = [
-            "touite" => $touite, "auteur" => $ligne["auteur"]
+                "touite" => $touite,
+                "auteur" => $ligne["auteur"],
+                "id_auteur" => (int) $ligne["id_auteur"]
             ];
         }
         return $resultat;
@@ -178,5 +180,17 @@ class TouiteurRepository {
         ]);
 
         return true;
+    }
+
+
+    public function estSuivi(int $idSuiveur, int $idSuivi): bool {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM suivi_utilisateur WHERE id_suiveur = :suiveur AND id_suivi = :suivi"
+        );
+        $stmt->execute([
+            'suiveur' => $idSuiveur,
+            'suivi' => $idSuivi
+        ]);
+        return (bool) $stmt->fetch();
     }
 }
