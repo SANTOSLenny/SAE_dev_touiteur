@@ -7,7 +7,7 @@ class Tag {
     protected string $libelle;
 
     public function __construct(string $libelle) {
-        $this->libelle = trim(ltrim($libelle, '#'));
+        $this->libelle = trim(ltrim($libelle, '#')); // Supprime le caractère '#' au début du libellé si présent
     }
 
     public function getLibelle(): string {

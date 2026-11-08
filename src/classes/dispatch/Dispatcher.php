@@ -5,9 +5,10 @@ namespace iutnc\touiteur\dispatch;
 use iutnc\touiteur\actions\DefaultAction;
 use iutnc\touiteur\actions\ConsulterTagAction;
 use iutnc\touiteur\actions\ConnexionAction;
-use iutnc\touiteur\actions\SuivreAction; 
+use iutnc\touiteur\actions\SuivreAction;
 use iutnc\touiteur\actions\ConsulterUtilisateurAction;
 use iutnc\touiteur\actions\VoterAction;
+use iutnc\touiteur\actions\AddTouiteAction;
 
 class Dispatcher {
 
@@ -15,12 +16,11 @@ class Dispatcher {
 
     public function __construct()
     {
-        $this->action = $_GET["action"] ?? "default";
+        $this->action =$_GET["action"] ?? "default";
     }
 
     public function run(): void {
-
-        switch($this->action){       
+        switch($this->action){
             case "consulter-tag":
                 $action = new ConsulterTagAction();
                 break;    
@@ -36,21 +36,23 @@ class Dispatcher {
             case "voter":
                 $action = new VoterAction();
                 break;
+            case "add-touite":
+                $action = new AddTouiteAction();
+                break;
             case "default":
-                
             default:
                 $action = new DefaultAction();
                 break;
-
         }
 
-        $html = $action->execute();
-
+        $html =$action->execute();
         $this->renderPage($html);
     }
 
     private function renderPage(string $html): void {
-        $infoUser = isset($_SESSION['user_pseudo']) ? " | Utilisateur actif : <strong>" . $_SESSION['user_pseudo'] . "</strong>" : "";
+        $infoUser = isset($_SESSION['user_pseudo']) ? " | Utilisateur actif : <strong>" . htmlspecialchars($_SESSION['user_pseudo'], ENT_QUOTES, 'UTF-8') . "</strong>" : "";
+        $lienPublier = isset($_SESSION['user_id']) ? '<a href="?action=add-touite">Publier un Touite</a>' : '';
+
         $page = <<<HTML
         <!DOCTYPE html>
         <html lang="fr">
@@ -61,20 +63,18 @@ class Dispatcher {
         </head>
 
         <body>
-
             <h1>Touiteur</h1>
-
             <nav>
                 <a href="?action=default">Accueil</a>
                 <a href="?action=connexion">Choisir un utilisateur</a>
-                <span>$infoUser</span>
+                {$lienPublier}
+                <span>{$infoUser}</span>
             </nav>
-
             <main>
-                $html
+                {$html}
             </main>
-
         </body>
+        
         </html>
         HTML;
 
