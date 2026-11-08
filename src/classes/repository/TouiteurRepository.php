@@ -48,18 +48,16 @@ class TouiteurRepository {
         $requete = $this->pdo->query(
             "SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo AS auteur FROM touite t INNER JOIN utilisateur u ON t.id_auteur = u.id ORDER BY t.date DESC, t.id DESC");
 
-        $resultat[] = [
-            "touite" => $touite,
-            "auteur" => $ligne["auteur"],
-            "id_auteur" => (int) $ligne["id_auteur"]
-        ];
+        $resultat = [];
 
         while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
 
             $touite = new Touite((int) $ligne["id"],$ligne["texte"],(int) $ligne["id_auteur"],$ligne["date"]);
 
             $resultat[] = [
-            "touite" => $touite, "auteur" => $ligne["auteur"]
+                "touite" => $touite,
+                "auteur" => $ligne["auteur"],
+                "id_auteur" => (int) $ligne["id_auteur"]
             ];
         }
         return $resultat;

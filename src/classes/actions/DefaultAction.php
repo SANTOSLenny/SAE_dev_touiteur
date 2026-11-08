@@ -19,9 +19,14 @@ class DefaultAction extends Action {
                 $ligne["auteur"]
             );
 
-        $html .= $renderer->render(1);
+            $html .= $renderer->render(1);
+            $idAuteur = $ligne["id_auteur"];
+            
+            if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] !== $idAuteur) {
+                    $html .= "<p><a href='?action=suivre&id_auteur={$idAuteur}'>[Suivre {$ligne['auteur']}]</a></p>";
+            }
         }
-
+        $html .= "<hr>";
         return $html;
     }
 }

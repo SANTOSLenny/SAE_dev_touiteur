@@ -3,6 +3,8 @@
 namespace iutnc\touiteur\actions;
 
 use iutnc\touiteur\db\ConnectionFactory;
+use iutnc\touiteur\repository\TouiteurRepository;
+use iutnc\touiteur\render\TouiteRenderer;
 
 class SuivreAction extends Action {
 
