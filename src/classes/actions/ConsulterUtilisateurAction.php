@@ -8,7 +8,6 @@ use Override;
 
 class ConsulterUtilisateurAction extends Action {
 
-    #[Override]
     public function execute(): string
     {
         $uid = (int) ($_GET["uid"] ?? 0);

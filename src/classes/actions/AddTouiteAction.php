@@ -20,7 +20,7 @@ class AddTouiteAction extends Action {
         }
 
         // Récupération et nettoyage des données en POST
-        $texte = filter_input(INPUT_POST, 'texte', FILTER_SANITIZE_SPECIAL_CHARS) ?? '';
+        $texte = trim($_POST['texte'] ?? '');
         $idAuteur = (int) $_SESSION['user_id'];
         $date = date('Y-m-d H:i:s');
 
