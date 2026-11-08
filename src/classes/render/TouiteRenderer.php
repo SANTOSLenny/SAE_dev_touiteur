@@ -16,14 +16,29 @@ class TouiteRenderer {
 
     public function render(int $selecteur): String {
 
-    switch($selecteur){
-        default:
-            $html = '<div class="touite">';
-            $html .= "<h3>" . $this->auteur . "</h3>";
-            $html .= "<p>" . $this->touite->getTexte() . "</p>";
-            $html .= "</div>";
+        switch($selecteur){
+            default:
 
-            return $html;
+                $uid = $this->touite->getUid();
+                $html = '<div class="touite">';
+                $html .= '<h3><a href="?action=consulter-utilisateur&uid=' . $uid . '">' . $this->auteur . '</a></h3>';
+                
+                $texteBrut = $this->touite->getTexte();
+                $texteFormate = preg_replace('/#(\w+)/', '<a href="?action=consulter-tag&tag=$1">#$1</a>', $texteBrut);
+                
+                $html .= "<p>" . $texteFormate . "</p>";
+                if (isset($_SESSION["user_id"])) {
+                    $idTouite = $this->touite->getId();
+
+                    $html .= '<form action="?action=voter" method="POST">';
+                    $html .= '<input type="hidden" name="id_touite" value="'. $idTouite . '">';
+                    $html .= '<button type="submit" name="valeur" value="1">Like +1</button>';
+                    $html .= '<button type="submit" name="valeur" value="-1">Dislike -1</button>';
+                    $html .= '</form>';
+                }
+                $html .= "</div>";
+                
+                return $html;
         }
     }
 }
