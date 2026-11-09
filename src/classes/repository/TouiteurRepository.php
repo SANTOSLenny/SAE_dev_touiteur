@@ -63,6 +63,54 @@ class TouiteurRepository {
         return $resultat;
     }
 
+    
+    public function findTouitesPagines(int $limite, int $offset): array {
+
+        $requete = $this->pdo->prepare(
+            "SELECT t.id, t.texte, t.date, t.id_auteur,
+                    u.pseudo AS auteur
+            FROM touite t
+            INNER JOIN utilisateur u ON t.id_auteur = u.id
+            ORDER BY t.date DESC, t.id DESC
+            LIMIT :limite OFFSET :offset"
+        );
+
+        $requete->bindValue(':limite', $limite, PDO::PARAM_INT);
+        $requete->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+        $requete->execute();
+
+        $resultat = [];
+
+        while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
+            $touite = new Touite(
+                (int) $ligne["id"],
+                $ligne["texte"],
+                (int) $ligne["id_auteur"],
+                $ligne["date"]
+            );
+
+            $resultat[] = [
+                "touite" => $touite,
+                "auteur" => $ligne["auteur"],
+                "id_auteur" => (int) $ligne["id_auteur"]
+            ];
+        }
+
+        return $resultat;
+    }
+
+    
+    public function countTouites(): int {
+        $requete = $this->pdo->query(
+            "SELECT COUNT(*) FROM touite"
+        );
+
+        return (int) $requete->fetchColumn();
+    }
+
+
+
     public function getTouitesByTag(string $tag): array {
 
     $requete = $this->pdo->prepare(

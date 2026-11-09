@@ -8,8 +8,26 @@ use iutnc\touiteur\render\TouiteRenderer;
 class DefaultAction extends Action {
 
     public function execute(): string {
+
         $repository = TouiteurRepository::getInstance();
-        $touites = $repository->findAllTouites();
+
+        $limite = 5;
+        $totalTouites = $repository->countTouites();
+        $totalPages = max(1, (int) ceil($totalTouites / $limite));
+
+        $page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
+
+        if ($page === false || $page === null || $page < 1) {
+            $page = 1;
+        }
+
+        $page = min($page, $totalPages);
+
+
+        $offset = ($page - 1) * $limite;
+
+        $touites = $repository->findTouitesPagines($limite, $offset);
+
 
         $html = "<h2>Les derniers touites</h2>";
 
@@ -30,11 +48,26 @@ class DefaultAction extends Action {
             );
 
             $html .= $renderer->render(1);
-            $idAuteur = $ligne["id_auteur"];
             
             
         }
+
+
         $html .= "<hr>";
+
+        if ($page > 1) {
+            $pagePrecedente = $page - 1;
+            $html .= "<a href='?action=default&page={$pagePrecedente}'>Précédent</a> ";
+        }
+
+        $html .= " Page {$page} sur {$totalPages} ";
+
+        if ($page < $totalPages) {
+            $pageSuivante = $page + 1;
+            $html .= "<a href='?action=default&page={$pageSuivante}'>Suivant</a>";
+        }
+
         return $html;
+
     }
 }
