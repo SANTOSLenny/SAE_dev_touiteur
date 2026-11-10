@@ -9,6 +9,7 @@ use iutnc\touiteur\actions\SuivreAction;
 use iutnc\touiteur\actions\ConsulterUtilisateurAction;
 use iutnc\touiteur\actions\VoterAction;
 use iutnc\touiteur\actions\AddTouiteAction;
+use iutnc\touiteur\actions\MurAction;
 
 class Dispatcher {
 
@@ -39,6 +40,9 @@ class Dispatcher {
             case "add-touite":
                 $action = new AddTouiteAction();
                 break;
+            case "mur":
+                $action = new MurAction();
+                break;
             case "default":
             default:
                 $action = new DefaultAction();
@@ -52,6 +56,10 @@ class Dispatcher {
     private function renderPage(string $html): void {
         $infoUser = isset($_SESSION['user_pseudo']) ? " | Utilisateur actif : <strong>" . htmlspecialchars($_SESSION['user_pseudo'], ENT_QUOTES, 'UTF-8') . "</strong>" : "";
         $lienPublier = isset($_SESSION['user_id']) ? '<a href="?action=add-touite">Publier un Touite</a>' : '';
+        
+        if (isset($_SESSION['user_id'])) {
+            $navLinks .= ' | <a href="?action=mur">Mon Mur</a>';
+        }
 
         $page = <<<HTML
         <!DOCTYPE html>
@@ -68,6 +76,7 @@ class Dispatcher {
                 <a href="?action=default">Accueil</a>
                 <a href="?action=connexion">Choisir un utilisateur</a>
                 {$lienPublier}
+                {$navLinks}
                 <span>{$infoUser}</span>
             </nav>
             <main>
