@@ -60,6 +60,7 @@ class Dispatcher {
         <head>
             <meta charset="UTF-8">
             <title>Touiteur</title>
+            <link rel="stylesheet" href="src/css/style.css">
         </head>
 
         <body>
