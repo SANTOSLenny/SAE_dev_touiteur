@@ -241,4 +241,33 @@ class TouiteurRepository {
         ]);
         return (bool) $stmt->fetch();
     }
+
+
+    public function getMurUtilisateur(int $uid): array {
+        $sql = "SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo AS auteur 
+                FROM touite t 
+                INNER JOIN utilisateur u ON t.id_auteur = u.id 
+                WHERE t.id_auteur IN (SELECT id_suivi FROM suivi_utilisateur WHERE id_suiveur = :uid)
+                ORDER BY t.date DESC, t.id DESC";
+
+        $requete = $this->pdo->prepare($sql);
+        $requete->execute(['uid' => $uid]);
+
+        $resultat = [];
+        while ($ligne = $requete->fetch(\PDO::FETCH_ASSOC)) {
+            $touite = new Touite(
+                (int) $ligne["id"], 
+                $ligne["texte"], 
+                (int) $ligne["id_auteur"], 
+                $ligne["date"]
+            );
+
+            $resultat[] = [
+                "touite" => $touite,
+                "auteur" => $ligne["auteur"],
+                "id_auteur" => (int) $ligne["id_auteur"]
+            ];
+        }
+        return $resultat;
+    }
 }
