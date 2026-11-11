@@ -10,6 +10,7 @@ use iutnc\touiteur\actions\ConsulterUtilisateurAction;
 use iutnc\touiteur\actions\VoterAction;
 use iutnc\touiteur\actions\AddTouiteAction;
 use iutnc\touiteur\actions\MurAction;
+use iutnc\touiteur\actions\InfluenceursAction;
 
 class Dispatcher {
 
@@ -43,6 +44,9 @@ class Dispatcher {
             case "mur":
                 $action = new MurAction();
                 break;
+            case "influenceurs":
+                $action = new InfluenceursAction();
+                break;
             case "default":
             default:
                 $action = new DefaultAction();
@@ -57,8 +61,15 @@ class Dispatcher {
         $infoUser = isset($_SESSION['user_pseudo']) ? " | Utilisateur actif : <strong>" . htmlspecialchars($_SESSION['user_pseudo'], ENT_QUOTES, 'UTF-8') . "</strong>" : "";
         $lienPublier = isset($_SESSION['user_id']) ? '<a href="?action=add-touite">Publier un Touite</a>' : '';
         
+
+        $navLinks = "";
         if (isset($_SESSION['user_id'])) {
             $navLinks .= ' | <a href="?action=mur">Mon Mur</a>';
+        }
+
+        $lienInfluenceurs = "";
+        if (($_SESSION["user_role"] ?? "") === "admin") {
+            $lienInfluenceurs = '<a href="?action=influenceurs">TOP des influenceurs</a>';
         }
 
         $page = <<<HTML
@@ -77,6 +88,7 @@ class Dispatcher {
                 <a href="?action=connexion">Choisir un utilisateur</a>
                 {$lienPublier}
                 {$navLinks}
+                {$lienInfluenceurs}
                 <span>{$infoUser}</span>
             </nav>
             <main>

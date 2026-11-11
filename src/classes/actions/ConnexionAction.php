@@ -13,7 +13,7 @@ class ConnexionAction extends Action {
            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_utilisateur'])) {
                $id = (int) $_POST['id_utilisateur'];
               
-               $stmt = $db->prepare("SELECT pseudo FROM utilisateur WHERE id = :id");
+               $stmt = $db->prepare("SELECT pseudo, role FROM utilisateur WHERE id = :id");
                $stmt->execute(['id' => $id]);
                $user = $stmt->fetch();
 
@@ -21,6 +21,7 @@ class ConnexionAction extends Action {
                if ($user) {
                    $_SESSION['user_id'] = $id;
                    $_SESSION['user_pseudo'] = $user['pseudo'];
+                   $_SESSION['user_role'] = $user["role"];
                   
                    $pseudoSecurise = htmlspecialchars($user['pseudo'], ENT_QUOTES, 'UTF-8');
                   
