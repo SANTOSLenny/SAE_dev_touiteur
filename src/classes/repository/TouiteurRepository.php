@@ -46,13 +46,13 @@ class TouiteurRepository {
     public function findAllTouites(): array {
 
         $requete = $this->pdo->query(
-            "SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo AS auteur FROM touite t INNER JOIN utilisateur u ON t.id_auteur = u.id ORDER BY t.date DESC, t.id DESC");
+            "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur FROM touite t INNER JOIN utilisateur u ON t.id_auteur = u.id ORDER BY t.date DESC, t.id DESC");
 
         $resultat = [];
 
         while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
 
-            $touite = new Touite((int) $ligne["id"],$ligne["texte"],(int) $ligne["id_auteur"],$ligne["date"]);
+            $touite = new Touite((int) $ligne["id"],$ligne["texte"],(int) $ligne["id_auteur"],$ligne["date"],$ligne["image"] ?? null);
 
             $resultat[] = [
                 "touite" => $touite,
@@ -67,7 +67,7 @@ class TouiteurRepository {
     public function findTouitesPagines(int $limite, int $offset): array {
 
         $requete = $this->pdo->prepare(
-            "SELECT t.id, t.texte, t.date, t.id_auteur,
+            "SELECT t.id, t.texte, t.date, t.id_auteur, t.image,
                     u.pseudo AS auteur
             FROM touite t
             INNER JOIN utilisateur u ON t.id_auteur = u.id
@@ -87,7 +87,8 @@ class TouiteurRepository {
                 (int) $ligne["id"],
                 $ligne["texte"],
                 (int) $ligne["id_auteur"],
-                $ligne["date"]
+                $ligne["date"],
+                $ligne["image"] ?? null
             );
 
             $resultat[] = [
@@ -114,7 +115,7 @@ class TouiteurRepository {
     public function getTouitesByTag(string $tag): array {
 
     $requete = $this->pdo->prepare(
-        "SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo AS auteur 
+        "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur 
          FROM touite t 
          INNER JOIN utilisateur u ON t.id_auteur = u.id 
          INNER JOIN touite_tag t2t ON t.id = t2t.id_touite
@@ -127,7 +128,7 @@ class TouiteurRepository {
 
     $resultat = [];
     while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
-        $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"]);
+        $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"], $ligne["image"] ?? null);
         
         $resultat[] = [
             "touite" => $touite, 
@@ -139,11 +140,12 @@ class TouiteurRepository {
     }
 
     public function ajouterTouite(Touite $touite): int {
-        $requete = $this->pdo->prepare("INSERT INTO touite (texte, date, id_auteur) VALUES (:texte, :date, :id_auteur)");
+        $requete = $this->pdo->prepare("INSERT INTO touite (texte, date, id_auteur, image) VALUES (:texte, :date, :id_auteur, :image)");
         $requete->execute([
             'texte' => $touite->getTexte(),
             'date' => $touite->getDate(), 
-            'id_auteur' => $touite->getUid()
+            'id_auteur' => $touite->getUid(),
+            'image' => $touite->getImage()
         ]);
 
         $id_touite = $this->pdo->lastInsertId();
@@ -177,7 +179,7 @@ class TouiteurRepository {
 
     public function getTouitesByUser(int $uid) : array{
 
-        $requete = $this->pdo->prepare("SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo as auteur from touite t inner join utilisateur u on t.id_auteur = u.id WHERE t.id_auteur = :uid ORDER BY t.date desc, t.id desc");
+        $requete = $this->pdo->prepare("SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo as auteur from touite t inner join utilisateur u on t.id_auteur = u.id WHERE t.id_auteur = :uid ORDER BY t.date desc, t.id desc");
 
         $requete->execute([
             "uid" => $uid
@@ -187,7 +189,7 @@ class TouiteurRepository {
 
         while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
 
-            $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"]);
+            $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"], $ligne["image"] ?? null);
 
             $res[] = [
                 "touite" => $touite,
@@ -244,7 +246,7 @@ class TouiteurRepository {
 
 
     public function getMurUtilisateur(int $uid): array {
-        $sql = "SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo AS auteur 
+        $sql = "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur 
                 FROM touite t 
                 INNER JOIN utilisateur u ON t.id_auteur = u.id 
                 WHERE t.id_auteur IN (SELECT id_suivi FROM suivi_utilisateur WHERE id_suiveur = :uid)
@@ -259,7 +261,8 @@ class TouiteurRepository {
                 (int) $ligne["id"], 
                 $ligne["texte"], 
                 (int) $ligne["id_auteur"], 
-                $ligne["date"]
+                $ligne["date"],
+                $ligne["image"] ?? null
             );
 
             $resultat[] = [
