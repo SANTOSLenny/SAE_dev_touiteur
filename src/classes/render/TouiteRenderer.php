@@ -42,8 +42,8 @@ class TouiteRenderer {
                     $html .= '<p><strong>Date de publication :</strong> ' . $this->touite->getDate() . '</p>';
                     $html .= '</div>';
                     $html .= '</details>';
+                    $html .= '<br>';
                 }
-
                 $html .= "</div>";
                 
                 return $html;
