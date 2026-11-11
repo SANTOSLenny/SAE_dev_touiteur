@@ -270,4 +270,9 @@ class TouiteurRepository {
         }
         return $resultat;
     }
+
+    public function getTopInfluenceurs(): array {
+        $requete = $this->pdo->query("select u.id, u.pseudo, COUNT(*) as nb_abonnes from utilisateur u inner join suivi_utilisateur s on s.id_suivi = u.id group by u.id, u.pseudo order by nb_abonnes desc, u.id ASC LIMIT 5");
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
