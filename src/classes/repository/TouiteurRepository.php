@@ -243,6 +243,38 @@ class TouiteurRepository {
     }
 
 
+    public function suivreUtilisateur(int $idSuiveur, int $idSuivi): bool {
+        if ($this->estSuivi($idSuiveur, $idSuivi)) {
+            return false;
+        }
+
+        $requete = $this->pdo->prepare(
+            "INSERT INTO suivi_utilisateur (id_suiveur, id_suivi)
+            VALUES (:suiveur, :suivi)"
+        );
+
+        return $requete->execute([
+            'suiveur' => $idSuiveur,
+            'suivi' => $idSuivi
+        ]);
+    }
+
+
+    public function nePlusSuivreUtilisateur(int $idSuiveur, int $idSuivi): bool {
+        $requete = $this->pdo->prepare(
+            "DELETE FROM suivi_utilisateur
+            WHERE id_suiveur = :suiveur
+            AND id_suivi = :suivi"
+        );
+
+        return $requete->execute([
+            'suiveur' => $idSuiveur,
+            'suivi' => $idSuivi
+        ]);
+    }
+
+
+
     public function estAbonneTag(int $idUtilisateur, int $idTag): bool {
 
         $requete = $this->pdo->prepare(
