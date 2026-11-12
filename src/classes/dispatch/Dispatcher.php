@@ -9,6 +9,7 @@ use iutnc\touiteur\actions\SuivreAction;
 use iutnc\touiteur\actions\ConsulterUtilisateurAction;
 use iutnc\touiteur\actions\VoterAction;
 use iutnc\touiteur\actions\AddTouiteAction;
+use iutnc\touiteur\actions\AbonnerTagAction;
 
 class Dispatcher {
 
@@ -38,6 +39,9 @@ class Dispatcher {
                 break;
             case "add-touite":
                 $action = new AddTouiteAction();
+                break;
+            case "abonner-tag":
+                $action = new AbonnerTagAction();
                 break;
             case "default":
             default:

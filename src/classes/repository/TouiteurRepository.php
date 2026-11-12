@@ -63,7 +63,7 @@ class TouiteurRepository {
         return $resultat;
     }
 
-    
+
     public function findTouitesPagines(int $limite, int $offset): array {
 
         $requete = $this->pdo->prepare(
@@ -100,7 +100,7 @@ class TouiteurRepository {
         return $resultat;
     }
 
-    
+
     public function countTouites(): int {
         $requete = $this->pdo->query(
             "SELECT COUNT(*) FROM touite"
@@ -114,12 +114,12 @@ class TouiteurRepository {
     public function getTouitesByTag(string $tag): array {
 
     $requete = $this->pdo->prepare(
-        "SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo AS auteur 
-         FROM touite t 
-         INNER JOIN utilisateur u ON t.id_auteur = u.id 
+        "SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo AS auteur
+         FROM touite t
+         INNER JOIN utilisateur u ON t.id_auteur = u.id
          INNER JOIN touite_tag t2t ON t.id = t2t.id_touite
          INNER JOIN tag tg ON t2t.id_tag = tg.id
-         WHERE tg.libelle = :tag 
+         WHERE tg.libelle = :tag
          ORDER BY t.date DESC, t.id DESC"
     );
 
@@ -128,13 +128,13 @@ class TouiteurRepository {
     $resultat = [];
     while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
         $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"]);
-        
+
         $resultat[] = [
-            "touite" => $touite, 
+            "touite" => $touite,
             "auteur" => $ligne["auteur"]
         ];
     }
-    
+
     return $resultat;
     }
 
@@ -142,7 +142,7 @@ class TouiteurRepository {
         $requete = $this->pdo->prepare("INSERT INTO touite (texte, date, id_auteur) VALUES (:texte, :date, :id_auteur)");
         $requete->execute([
             'texte' => $touite->getTexte(),
-            'date' => $touite->getDate(), 
+            'date' => $touite->getDate(),
             'id_auteur' => $touite->getUid()
         ]);
 
@@ -171,7 +171,7 @@ class TouiteurRepository {
                 'id_tag' => $id_tag
             ]);
         }
-        
+
         return $id_touite;
     }
 
@@ -241,4 +241,57 @@ class TouiteurRepository {
         ]);
         return (bool) $stmt->fetch();
     }
+
+
+    public function estAbonneTag(int $idUtilisateur, int $idTag): bool {
+
+        $requete = $this->pdo->prepare(
+            "SELECT COUNT(*)
+            FROM abonnement_tag
+            WHERE id_utilisateur = :uid
+            AND id_tag = :tag"
+        );
+
+        $requete->execute([
+            'uid' => $idUtilisateur,
+            'tag' => $idTag
+        ]);
+
+        return (int) $requete->fetchColumn() > 0;
+    }
+
+
+    public function abonnerTag(int $idUtilisateur, int $idTag): bool {
+
+        if ($this->estAbonneTag($idUtilisateur, $idTag)) {
+            return false;
+        }
+
+        $requete = $this->pdo->prepare(
+            "INSERT INTO abonnement_tag (id_utilisateur, id_tag)
+            VALUES (:uid, :tag)"
+        );
+
+        return $requete->execute([
+            'uid' => $idUtilisateur,
+            'tag' => $idTag
+        ]);
+    }
+
+
+    public function tagExiste(int $idTag): bool {
+
+        $requete = $this->pdo->prepare(
+            "SELECT COUNT(*) FROM tag WHERE id = :idTag"
+        );
+
+        $requete->execute([
+            'idTag' => $idTag
+        ]);
+
+        return (int) $requete->fetchColumn() > 0;
+    }
+
+
+
 }
