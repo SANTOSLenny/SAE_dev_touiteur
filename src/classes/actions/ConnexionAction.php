@@ -7,15 +7,12 @@ use iutnc\touiteur\repository\TouiteurRepository;
 class ConnexionAction extends Action {
      public function execute(): string {
        try {
-           $db = TouiteurRepository::getInstance()->getPdo();
+           $repo = TouiteurRepository::getInstance();
 
 
            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_utilisateur'])) {
-               $id = (int) $_POST['id_utilisateur'];
-              
-               $stmt = $db->prepare("SELECT pseudo, role FROM utilisateur WHERE id = :id");
-               $stmt->execute(['id' => $id]);
-               $user = $stmt->fetch();
+                $id = (int) $_POST['id_utilisateur'];  
+                $user = $repo->getUtilisateurParId($id);
 
 
                if ($user) {
@@ -31,8 +28,7 @@ class ConnexionAction extends Action {
                    return "<p>erreur util introuvable</p><a href='?action=connexion'>Réessayer</a>";
                }
            }
-           $stmt = $db->query("SELECT id, pseudo FROM utilisateur");
-           $utilisateurs = $stmt->fetchAll();
+           $utilisateurs = $repo->getTousLesUtilisateurs();
 
 
            $html = "<h2>Choisir un utilisateur de test</h2>";

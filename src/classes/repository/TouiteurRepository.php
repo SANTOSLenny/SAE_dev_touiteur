@@ -249,6 +249,38 @@ class TouiteurRepository {
     }
 
 
+    public function suivreUtilisateur(int $idSuiveur, int $idSuivi): bool {
+        if ($this->estSuivi($idSuiveur, $idSuivi)) {
+            return false;
+        }
+
+        $requete = $this->pdo->prepare(
+            "INSERT INTO suivi_utilisateur (id_suiveur, id_suivi)
+            VALUES (:suiveur, :suivi)"
+        );
+
+        return $requete->execute([
+            'suiveur' => $idSuiveur,
+            'suivi' => $idSuivi
+        ]);
+    }
+
+
+    public function nePlusSuivreUtilisateur(int $idSuiveur, int $idSuivi): bool {
+        $requete = $this->pdo->prepare(
+            "DELETE FROM suivi_utilisateur
+            WHERE id_suiveur = :suiveur
+            AND id_suivi = :suivi"
+        );
+
+        return $requete->execute([
+            'suiveur' => $idSuiveur,
+            'suivi' => $idSuivi
+        ]);
+    }
+
+
+
     public function estAbonneTag(int $idUtilisateur, int $idTag): bool {
 
         $requete = $this->pdo->prepare(
@@ -363,5 +395,42 @@ class TouiteurRepository {
         $moyenne = $requete->fetchColumn();
 
         return $moyenne === null ? null : (float) $moyenne;
+    }
+
+    public function getUtilisateurParId(int $id): array|false {
+    $requete = $this->pdo->prepare(
+        "SELECT pseudo, role
+         FROM utilisateur
+         WHERE id = :id"
+    );
+
+    $requete->execute([
+        'id' => $id
+    ]);
+
+    return $requete->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+    public function getTousLesUtilisateurs(): array {
+        $requete = $this->pdo->query(
+            "SELECT id, pseudo FROM utilisateur"
+        );
+
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getIdTagParLibelle(string $libelle): int|false {
+    $requete = $this->pdo->prepare(
+        "SELECT id FROM tag WHERE libelle = :libelle"
+    );
+
+    $requete->execute([
+        'libelle' => $libelle
+    ]);
+
+    $id = $requete->fetchColumn();
+
+    return $id === false ? false : (int) $id;
     }
 }
