@@ -396,4 +396,41 @@ class TouiteurRepository {
 
         return $moyenne === null ? null : (float) $moyenne;
     }
+
+    public function getUtilisateurParId(int $id): array|false {
+    $requete = $this->pdo->prepare(
+        "SELECT pseudo, role
+         FROM utilisateur
+         WHERE id = :id"
+    );
+
+    $requete->execute([
+        'id' => $id
+    ]);
+
+    return $requete->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+    public function getTousLesUtilisateurs(): array {
+        $requete = $this->pdo->query(
+            "SELECT id, pseudo FROM utilisateur"
+        );
+
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getIdTagParLibelle(string $libelle): int|false {
+    $requete = $this->pdo->prepare(
+        "SELECT id FROM tag WHERE libelle = :libelle"
+    );
+
+    $requete->execute([
+        'libelle' => $libelle
+    ]);
+
+    $id = $requete->fetchColumn();
+
+    return $id === false ? false : (int) $id;
+    }
 }

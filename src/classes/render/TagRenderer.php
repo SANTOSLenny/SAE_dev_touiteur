@@ -12,9 +12,13 @@ class TagRenderer {
     }
 
     public function render(): string {
-        $libelle = htmlspecialchars($this->tag->getLibelle());
-        $url = "?action=consulter-tag&tag=" . urlencode($libelle);
+        $libelle = $this->tag->getLibelle();
 
-        return "<a class=\"tag\" href=\"{$url}\">#{$libelle}</a>";
+        $libelleSecurise = htmlspecialchars($libelle, ENT_QUOTES, 'UTF-8');
+
+        $url = "?action=consulter-tag&tag=" . urlencode($libelle);
+        $urlSecurisee = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+
+        return "<a class=\"tag\" href=\"{$urlSecurisee}\">#{$libelleSecurise}</a>";
     }
 }

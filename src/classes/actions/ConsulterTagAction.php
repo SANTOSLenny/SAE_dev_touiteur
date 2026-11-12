@@ -2,7 +2,6 @@
 
 namespace iutnc\touiteur\actions;
 
-use iutnc\touiteur\db\ConnectionFactory;
 use iutnc\touiteur\modele\Tag;
 use iutnc\touiteur\render\TagRenderer;
 use iutnc\touiteur\repository\TouiteurRepository;
@@ -14,39 +13,21 @@ class ConsulterTagAction extends Action {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
 
-        $tagDemande = htmlspecialchars($_GET['tag'] ?? '');
+        $tagDemande = trim($_GET['tag'] ?? '');
 
         if (empty($tagDemande)) {
             return "<h2>Erreur</h2><p>Aucun tag spécifié.</p>";
         }
 
+        $tagSecurise = htmlspecialchars($tagDemande, ENT_QUOTES, 'UTF-8');
         $tagObj = new Tag($tagDemande);
         $tagRenderer = new TagRenderer($tagObj);
         $tagHtml = $tagRenderer->render();
 
-        $db = TouiteurRepository::getInstance()->getPdo();
+        $repository = TouiteurRepository::getInstance();
+        $idTag = $repository->getIdTagParLibelle($tagDemande);
 
-        $stmtTag = $db->prepare(
-            "SELECT id FROM tag WHERE libelle = :libelle"
-        );
-
-        $stmtTag->execute([
-            'libelle' => $tagDemande
-        ]);
-
-        $idTag = $stmtTag->fetchColumn();
-
-        $stmt = $db->prepare("
-            SELECT t.id, t.texte, t.date, u.pseudo
-            FROM touite t
-            INNER JOIN touite_tag tt ON t.id = tt.id_touite
-            INNER JOIN tag tag ON tt.id_tag = tag.id
-            INNER JOIN utilisateur u ON t.id_auteur = u.id
-            WHERE tag.libelle = :libelle
-            ORDER BY t.date DESC
-        ");
-        $stmt->execute(['libelle' => $tagDemande]);
-        $touites = $stmt->fetchAll();
+        $touites = $repository->getTouitesByTag($tagDemande);
 
         $html = "<section class=\"tag-results\">";
         $html .= "<h2>Touites associés au tag {$tagHtml}</h2>";
@@ -58,7 +39,6 @@ class ConsulterTagAction extends Action {
 
             $idUtilisateur = (int) $_SESSION['user_id'];
 
-            // Vérifier si l'utilisateur est déjà abonné
             $dejaAbonne = $repository->estAbonneTag(
                 $idUtilisateur,
                 (int) $idTag
@@ -90,16 +70,15 @@ class ConsulterTagAction extends Action {
             }
         }
 
-
-
         if (empty($touites)) {
-            $html .= "<p>Aucun touite ne correspond au tag #{$tagDemande}.</p>";
+            $html .= "<p>Aucun touite ne correspond au tag #{$tagSecurise}.</p>";
         } else {
             $html .= "<ul class=\"liste-touites\">";
-            foreach ($touites as $touite) {
-                $auteur = htmlspecialchars($touite['pseudo']);
-                $texte = htmlspecialchars($touite['texte']);
-                $date = htmlspecialchars($touite['date']);
+            foreach ($touites as $element) {
+                $touite = $element['touite'];
+                $auteur = htmlspecialchars($element['auteur'], ENT_QUOTES, 'UTF-8');
+                $texte = htmlspecialchars($touite->getTexte(), ENT_QUOTES, 'UTF-8');
+                $date = htmlspecialchars($touite->getDate(), ENT_QUOTES, 'UTF-8');
                 $html .= "<li><strong>@{$auteur}</strong> ({$date}) :<br>{$texte}</li>";
             }
             $html .= "</ul>";
