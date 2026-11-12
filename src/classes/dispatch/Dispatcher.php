@@ -12,6 +12,7 @@ use iutnc\touiteur\actions\AddTouiteAction;
 use iutnc\touiteur\actions\AbonnerTagAction;
 use iutnc\touiteur\actions\MurAction;
 use iutnc\touiteur\actions\InfluenceursAction;
+use iutnc\touiteur\actions\StatsAction;
 
 class Dispatcher {
 
@@ -51,6 +52,9 @@ class Dispatcher {
             case "influenceurs":
                 $action = new InfluenceursAction();
                 break;
+            case "stats":
+                $action = new StatsAction();
+                break;
             case "default":
             default:
                 $action = new DefaultAction();
@@ -76,6 +80,11 @@ class Dispatcher {
             $lienInfluenceurs = '<a href="?action=influenceurs">TOP des influenceurs</a>';
         }
 
+        $lienStatistiques = "";
+        if (isset($_SESSION["user_id"])) {
+            $lienStatistiques = '<a href="?action=stats">Mes statistiques</a>';
+        }
+
         $page = <<<HTML
         <!DOCTYPE html>
         <html lang="fr">
@@ -93,6 +102,7 @@ class Dispatcher {
                 {$lienPublier}
                 {$navLinks}
                 {$lienInfluenceurs}
+                {$lienStatistiques}
                 <span>{$infoUser}</span>
             </nav>
             <main>

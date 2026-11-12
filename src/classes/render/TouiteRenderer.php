@@ -39,6 +39,21 @@ class TouiteRenderer {
                     $html .= '<button type="submit" name="valeur" value="1">Like +1</button>';
                     $html .= '<button type="submit" name="valeur" value="-1">Dislike -1</button>';
                     $html .= '</form>';
+                    // --- Bouton "Voir plus" avec effet dépliant (accordéon) ---
+                    $html .= '<details class="touite-details" style="margin-top: 10px;">';
+                    $html .= '<summary style="cursor: pointer; user-select: none;">Voir plus</summary>';
+                    // --- Contenu déplié (avec image) ---
+                    if ($this->touite->getImage() !== null) {
+                        $imgSrc = htmlspecialchars($this->touite->getImage(), ENT_QUOTES, 'UTF-8');
+                        $html .= '<div style="margin-top: 10px;">';
+                        $html .= '<img src="' . $imgSrc . '" alt="Image du touite" style="max-width: 100%; max-height: 250px; border-radius: 6px;">';
+                        $html .= '</div>';
+                    }
+                    $html .= '<div><p><strong>ID du touite :</strong> ' . $this->touite->getId() . '</p>';
+                    $html .= '<p><strong>Date de publication :</strong> ' . $this->touite->getDate() . '</p>';
+                    $html .= '</div>';
+                    $html .= '</details>';
+                    $html .= '<br>';
                 }
                 $html .= "</div>";
                 

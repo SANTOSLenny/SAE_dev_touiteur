@@ -24,7 +24,7 @@ class ConsulterTagAction extends Action {
         $tagRenderer = new TagRenderer($tagObj);
         $tagHtml = $tagRenderer->render();
 
-        $db = ConnectionFactory::makeConnection();
+        $db = TouiteurRepository::getInstance()->getPdo();
 
         $stmtTag = $db->prepare(
             "SELECT id FROM tag WHERE libelle = :libelle"
