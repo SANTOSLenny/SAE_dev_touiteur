@@ -10,8 +10,8 @@
 | 6 | Publier un touite | [ ] | — |
 | 7 | Évaluer un touite (+1 ou −1), une seule fois par utilisateur | [ ] | Santos |
 | 8 | Extraire les tags d’un touite et les enregistrer à la publication | [ ] | — |
-| 9 | Afficher le mur personnalisé d’un utilisateur | [ ] | — |
-| 10 | Suivre un utilisateur | [ ] | — |
+| 9 | Afficher le mur personnalisé d’un utilisateur | [x] | Holvec |
+| 10 | Suivre un utilisateur | [x] | Holvec |
 | 11 | S’abonner à un tag | [ ] | — |
 | 12 | Afficher ses abonnés et le score moyen de ses touites | [ ] | — |
 | 13 | Ajouter une image à un touite et l’afficher dans le détail | [ ] | — |
