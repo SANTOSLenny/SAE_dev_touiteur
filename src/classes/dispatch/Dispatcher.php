@@ -10,6 +10,8 @@ use iutnc\touiteur\actions\ConsulterUtilisateurAction;
 use iutnc\touiteur\actions\VoterAction;
 use iutnc\touiteur\actions\AddTouiteAction;
 use iutnc\touiteur\actions\AbonnerTagAction;
+use iutnc\touiteur\actions\MurAction;
+use iutnc\touiteur\actions\InfluenceursAction;
 
 class Dispatcher {
 
@@ -24,11 +26,11 @@ class Dispatcher {
         switch($this->action){
             case "consulter-tag":
                 $action = new ConsulterTagAction();
-                break;    
+                break;
             case "connexion":
                 $action = new ConnexionAction();
                 break;
-            case "suivre": 
+            case "suivre":
                 $action = new SuivreAction();
                 break;
             case "consulter-utilisateur":
@@ -42,6 +44,11 @@ class Dispatcher {
                 break;
             case "abonner-tag":
                 $action = new AbonnerTagAction();
+            case "mur":
+                $action = new MurAction();
+                break;
+            case "influenceurs":
+                $action = new InfluenceursAction();
                 break;
             case "default":
             default:
@@ -56,6 +63,17 @@ class Dispatcher {
     private function renderPage(string $html): void {
         $infoUser = isset($_SESSION['user_pseudo']) ? " | Utilisateur actif : <strong>" . htmlspecialchars($_SESSION['user_pseudo'], ENT_QUOTES, 'UTF-8') . "</strong>" : "";
         $lienPublier = isset($_SESSION['user_id']) ? '<a href="?action=add-touite">Publier un Touite</a>' : '';
+
+
+        $navLinks = "";
+        if (isset($_SESSION['user_id'])) {
+            $navLinks .= ' | <a href="?action=mur">Mon Mur</a>';
+        }
+
+        $lienInfluenceurs = "";
+        if (($_SESSION["user_role"] ?? "") === "admin") {
+            $lienInfluenceurs = '<a href="?action=influenceurs">TOP des influenceurs</a>';
+        }
 
         $page = <<<HTML
         <!DOCTYPE html>
@@ -72,13 +90,15 @@ class Dispatcher {
                 <a href="?action=default">Accueil</a>
                 <a href="?action=connexion">Choisir un utilisateur</a>
                 {$lienPublier}
+                {$navLinks}
+                {$lienInfluenceurs}
                 <span>{$infoUser}</span>
             </nav>
             <main>
                 {$html}
             </main>
         </body>
-        
+
         </html>
         HTML;
 
