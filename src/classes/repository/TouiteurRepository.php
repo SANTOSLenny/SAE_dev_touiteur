@@ -34,6 +34,10 @@ class TouiteurRepository {
         );
     }
 
+    public function getPdo(): PDO {
+        return $this->pdo;
+    }
+
     public static function getInstance(): TouiteurRepository {
 
         if (self::$instance === null) {
@@ -295,14 +299,20 @@ class TouiteurRepository {
 
 
     public function getMurUtilisateur(int $uid): array {
-        $sql = "SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo AS auteur
-                FROM touite t
-                INNER JOIN utilisateur u ON t.id_auteur = u.id
-                WHERE t.id_auteur IN (SELECT id_suivi FROM suivi_utilisateur WHERE id_suiveur = :uid)
+        $sql = "SELECT t.id, t.texte, t.date, t.id_auteur, u.pseudo AS auteur FROM touite t INNER JOIN utilisateur u ON u.id = t.id_auteur
+                WHERE t.id_auteur IN (
+                    SELECT id_suivi FROM suivi_utilisateur WHERE id_suiveur = :uid_suiveur
+                )
+                OR EXISTS (
+                    SELECT 1 FROM touite_tag tt INNER JOIN abonnement_tag ab ON ab.id_tag = tt.id_tag WHERE tt.id_touite = t.id AND ab.id_utilisateur = :uid_abonne
+                )
                 ORDER BY t.date DESC, t.id DESC";
 
         $requete = $this->pdo->prepare($sql);
-        $requete->execute(['uid' => $uid]);
+        $requete->execute([
+            'uid_suiveur' => $uid,
+            'uid_abonne' => $uid,
+        ]);
 
         $resultat = [];
         while ($ligne = $requete->fetch(\PDO::FETCH_ASSOC)) {

@@ -23,7 +23,7 @@ class SuivreAction extends Action {
                         <a href='?action=default'>Retour à l'accueil</a>";
             }
 
-            $db = ConnectionFactory::makeConnection();
+            $db = TouiteurRepository::getInstance()->getPdo();
 
             $stmt = $db->prepare("SELECT * FROM suivi_utilisateur WHERE id_suiveur = :suiveur AND id_suivi = :suivi");
             $stmt->execute([

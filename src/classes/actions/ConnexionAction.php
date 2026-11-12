@@ -2,12 +2,12 @@
 
 namespace iutnc\touiteur\actions;
 
-use iutnc\touiteur\db\ConnectionFactory;
+use iutnc\touiteur\repository\TouiteurRepository;
 
 class ConnexionAction extends Action {
      public function execute(): string {
        try {
-           $db = ConnectionFactory::makeConnection();
+           $db = TouiteurRepository::getInstance()->getPdo();
 
 
            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_utilisateur'])) {
