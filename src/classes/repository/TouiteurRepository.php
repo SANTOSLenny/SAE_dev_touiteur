@@ -326,4 +326,25 @@ class TouiteurRepository {
         $requete = $this->pdo->query("select u.id, u.pseudo, COUNT(*) as nb_abonnes from utilisateur u inner join suivi_utilisateur s on s.id_suivi = u.id group by u.id, u.pseudo order by nb_abonnes desc, u.id ASC LIMIT 5");
         return $requete->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getAbonnes(int $uid): array {
+        $requete = $this->pdo->prepare(
+            "SELECT u.pseudo FROM suivi_utilisateur s INNER JOIN utilisateur u ON u.id = s.id_suiveur WHERE s.id_suivi = :uid ORDER BY u.pseudo"
+        );
+
+        $requete->execute(["uid" => $uid]);
+
+        return $requete->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public function getScoreMoyen(int $uid): ?float {
+        $requete = $this->pdo->prepare(
+            "SELECT AVG(scores.score) AS moyenne FROM ( SELECT t.id, SUM(CASE WHEN v.valeur = '1' THEN 1 WHEN v.valeur = '-1' THEN -1 ELSE 0 END) AS score FROM touite t LEFT JOIN vote v ON v.id_touite = t.id WHERE t.id_auteur = :uid GROUP BY t.id) scores"
+        );
+
+        $requete->execute(["uid" => $uid]);
+        $moyenne = $requete->fetchColumn();
+
+        return $moyenne === null ? null : (float) $moyenne;
+    }
 }
