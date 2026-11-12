@@ -44,6 +44,7 @@ class Dispatcher {
                 break;
             case "abonner-tag":
                 $action = new AbonnerTagAction();
+                break;
             case "mur":
                 $action = new MurAction();
                 break;
