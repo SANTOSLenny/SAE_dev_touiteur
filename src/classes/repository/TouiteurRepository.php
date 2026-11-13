@@ -50,13 +50,19 @@ class TouiteurRepository {
     public function findAllTouites(): array {
 
         $requete = $this->pdo->query(
-            "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur FROM touite t INNER JOIN utilisateur u ON t.id_auteur = u.id ORDER BY t.date DESC, t.id DESC");
+            "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur,
+                COALESCE(SUM(CASE WHEN v.valeur = '1' THEN 1 WHEN v.valeur = '-1' THEN -1 ELSE 0 END), 0) AS score
+            FROM touite t 
+            INNER JOIN utilisateur u ON t.id_auteur = u.id 
+            LEFT JOIN vote v ON v.id_touite = t.id
+            GROUP BY t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo
+            ORDER BY t.date DESC, t.id DESC");  
 
         $resultat = [];
 
         while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
 
-            $touite = new Touite((int) $ligne["id"],$ligne["texte"],(int) $ligne["id_auteur"],$ligne["date"],$ligne["image"] ?? null);
+            $touite = new Touite((int) $ligne["id"],$ligne["texte"],(int) $ligne["id_auteur"],$ligne["date"],$ligne["image"] ?? null, (int) $ligne["score"] ?? 0);
 
             $resultat[] = [
                 "touite" => $touite,
@@ -71,10 +77,12 @@ class TouiteurRepository {
     public function findTouitesPagines(int $limite, int $offset): array {
 
         $requete = $this->pdo->prepare(
-            "SELECT t.id, t.texte, t.date, t.id_auteur, t.image,
-                    u.pseudo AS auteur
+            "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur,
+                COALESCE(SUM(CASE WHEN v.valeur = '1' THEN 1 WHEN v.valeur = '-1' THEN -1 ELSE 0 END), 0) AS score
             FROM touite t
             INNER JOIN utilisateur u ON t.id_auteur = u.id
+            LEFT JOIN vote v ON v.id_touite = t.id
+            GROUP BY t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo
             ORDER BY t.date DESC, t.id DESC
             LIMIT :limite OFFSET :offset"
         );
@@ -92,7 +100,8 @@ class TouiteurRepository {
                 $ligne["texte"],
                 (int) $ligne["id_auteur"],
                 $ligne["date"],
-                $ligne["image"] ?? null
+                $ligne["image"] ?? null,
+                (int) $ligne["score"] ?? 0
             );
 
             $resultat[] = [
@@ -120,20 +129,23 @@ class TouiteurRepository {
 
     $requete = $this->pdo->prepare(
 
-        "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur 
-         FROM touite t 
-         INNER JOIN utilisateur u ON t.id_auteur = u.id 
-         INNER JOIN touite_tag t2t ON t.id = t2t.id_touite
-         INNER JOIN tag tg ON t2t.id_tag = tg.id
-         WHERE tg.libelle = :tag
-         ORDER BY t.date DESC, t.id DESC"
+        "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur,
+            COALESCE(SUM(CASE WHEN v.valeur = '1' THEN 1 WHEN v.valeur = '-1' THEN -1 ELSE 0 END), 0) AS score
+        FROM touite t 
+        INNER JOIN utilisateur u ON t.id_auteur = u.id 
+        INNER JOIN touite_tag t2t ON t.id = t2t.id_touite
+        INNER JOIN tag tg ON t2t.id_tag = tg.id
+        LEFT JOIN vote v ON v.id_touite = t.id
+        WHERE tg.libelle = :tag
+        GROUP BY t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo
+        ORDER BY t.date DESC, t.id DESC"
     );
 
     $requete->execute(['tag' => $tag]);
 
     $resultat = [];
     while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
-        $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"], $ligne["image"] ?? null);
+        $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"], $ligne["image"] ?? null, (int) $ligne["score"] ?? 0);
         $resultat[] = [
             "touite" => $touite,
             "auteur" => $ligne["auteur"]
@@ -183,7 +195,15 @@ class TouiteurRepository {
 
     public function getTouitesByUser(int $uid) : array{
 
-        $requete = $this->pdo->prepare("SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo as auteur from touite t inner join utilisateur u on t.id_auteur = u.id WHERE t.id_auteur = :uid ORDER BY t.date desc, t.id desc");
+        $requete = $this->pdo->prepare(
+            "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur,
+                COALESCE(SUM(CASE WHEN v.valeur = '1' THEN 1 WHEN v.valeur = '-1' THEN -1 ELSE 0 END), 0) AS score 
+            FROM touite t 
+            INNER JOIN utilisateur u ON t.id_auteur = u.id 
+            LEFT JOIN vote v ON v.id_touite = t.id
+            WHERE t.id_auteur = :uid 
+            GROUP BY t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo
+            ORDER BY t.date DESC, t.id DESC");
 
         $requete->execute([
             "uid" => $uid
@@ -193,7 +213,7 @@ class TouiteurRepository {
 
         while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
 
-            $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"], $ligne["image"] ?? null);
+            $touite = new Touite((int) $ligne["id"], $ligne["texte"], (int) $ligne["id_auteur"], $ligne["date"], $ligne["image"] ?? null, (int) $ligne["score"] ?? 0);
 
             $res[] = [
                 "touite" => $touite,
@@ -334,16 +354,18 @@ class TouiteurRepository {
 
     public function getMurUtilisateur(int $uid): array {
 
-        $sql = "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur 
+        $sql = "SELECT t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo AS auteur,
+                    COALESCE(SUM(CASE WHEN v.valeur = '1' THEN 1 WHEN v.valeur = '-1' THEN -1 ELSE 0 END), 0) AS score 
                 FROM touite t 
                 INNER JOIN utilisateur u ON u.id = t.id_auteur
+                LEFT JOIN vote v ON v.id_touite = t.id
                 WHERE t.id_auteur IN (
                     SELECT id_suivi FROM suivi_utilisateur WHERE id_suiveur = :uid_suiveur
                 )
                 OR EXISTS (
                     SELECT 1 FROM touite_tag tt INNER JOIN abonnement_tag ab ON ab.id_tag = tt.id_tag WHERE tt.id_touite = t.id AND ab.id_utilisateur = :uid_abonne
                 )
-
+                GROUP BY t.id, t.texte, t.date, t.id_auteur, t.image, u.pseudo
                 ORDER BY t.date DESC, t.id DESC";
 
         $requete = $this->pdo->prepare($sql);
@@ -359,7 +381,8 @@ class TouiteurRepository {
                 $ligne["texte"], 
                 (int) $ligne["id_auteur"], 
                 $ligne["date"],
-                $ligne["image"] ?? null
+                $ligne["image"] ?? null,
+                (int) $ligne["score"] ?? 0
             );
 
             $resultat[] = [

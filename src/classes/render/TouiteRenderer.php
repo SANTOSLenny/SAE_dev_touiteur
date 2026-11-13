@@ -45,6 +45,7 @@ class TouiteRenderer {
                     }
                     $html .= '<div><p><strong>ID du touite :</strong> ' . $this->touite->getId() . '</p>';
                     $html .= '<p><strong>Date de publication :</strong> ' . $this->touite->getDate() . '</p>';
+                    $html .= '<p><strong>Score :</strong> ' . $this->touite->getScore() . '</p></div>';
                     $html .= '</div>';
                     $html .= '</details>';
                     $html .= '<br>';

@@ -8,10 +8,10 @@ class Touite {
     protected string $texte;
     protected int $uid;
     protected string $date;
-
     protected ?string $image; 
+    protected int $score;
 
-    public function __construct(int $id, string $texte, int $uid, string $date, ?string $image = null) {
+    public function __construct(int $id, string $texte, int $uid, string $date, ?string $image = null, int $score = 0) {
         if (mb_strlen($texte) > 235) {
             throw new \Exception("Le touite dépasse 235 caractères.");
         }
@@ -20,6 +20,11 @@ class Touite {
         $this->uid = $uid;
         $this->date = $date;
         $this->image = $image;
+        $this->score = $score;
+    }
+
+    public function getScore(): int {
+        return $this->score;
     }
 
     public function getId(): int {
