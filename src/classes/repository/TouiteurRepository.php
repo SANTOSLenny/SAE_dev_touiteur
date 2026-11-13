@@ -433,4 +433,15 @@ class TouiteurRepository {
 
     return $id === false ? false : (int) $id;
     }
+
+    public function getTendances(): array {
+        $requete = $this->pdo->query(
+            "SELECT tg.id, tg.libelle, COUNT(tt.id_touite) AS nb_mentions 
+             FROM tag tg 
+             INNER JOIN touite_tag tt ON tg.id = tt.id_tag 
+             GROUP BY tg.id, tg.libelle 
+             ORDER BY nb_mentions ASC, tg.libelle ASC"
+        );
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
