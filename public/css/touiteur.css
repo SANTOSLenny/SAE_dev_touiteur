@@ -161,8 +161,6 @@ button:hover, input[type='submit']:hover { filter: brightness(1.13); transform: 
 button:active { transform: translateY(0); }
 button[name='valeur'][value='1'] { color: #75efcb; background: rgba(59,219,173,.10); border-color: rgba(59,219,173,.22); }
 button[name='valeur'][value='-1'] { color: #ffa3b7; background: rgba(255,117,153,.09); border-color: rgba(255,117,153,.2); }
-main > form[action*='suivre'] { margin: -18px 0 22px; padding: 0 24px 13px; border: 1px solid var(--border); border-top: 0; border-radius: 0 0 var(--radius) var(--radius); background: #121c31; }
-.touite:has(+ form[action*='suivre']) { margin-bottom: 0; border-radius: var(--radius) var(--radius) 0 0; }
 .touite details { margin: 12px 0 0 !important; padding-top: 12px; border-top: 1px solid var(--border); }
 .touite summary { color: var(--muted); font-size: 13px; font-weight: 700; }
 .touite summary:hover { color: white; }
@@ -217,37 +215,52 @@ main th, main td { padding: 12px; text-align: left; border-bottom: 1px solid var
 main > .touite:has(+ form[action*="action=suivre"]) {
     margin-bottom: 0;
     border-bottom: none;
-    border-radius: 18px 18px 0 0;
+    border-radius: 20px 20px 0 0;
+}
+
+main > .touite:has(+ form[action*="action=suivre"]):hover {
+    transform: none;
 }
 
 main > form[action*="action=suivre"] {
-    position: relative;
-    z-index: 1;
     display: flex;
-    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    margin: 0 0 24px;
+    padding: 10px 24px 20px;
 
-    margin: 0 0 22px;
-    padding: 0 20px 18px;
-
-    background: #151e33;
-    border: 1px solid #293653;
+    background: #111a2d;
+    border: 1px solid var(--border);
     border-top: none;
-    border-radius: 0 0 18px 18px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, .17);
 }
 
 main > form[action*="action=suivre"] button {
     position: static;
     margin: 0;
-    padding: 9px 16px;
+    padding: 10px 18px;
 
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
     color: white;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
     border: none;
-    border-radius: 10px;
-    font-weight: 600;
+    border-radius: 11px;
+
+    font-weight: 700;
     cursor: pointer;
 }
 
 main > form[action*="action=suivre"] button:hover {
     filter: brightness(1.15);
+}
+
+main > .touite:not(:has(+ form[action*="action=suivre"])) {
+    border-radius: 20px;
+    margin-bottom: 22px;
+}
+
+@media (max-width: 720px) {
+    main > form[action*="action=suivre"] {
+        padding: 10px 16px 18px;
+    }
 }
