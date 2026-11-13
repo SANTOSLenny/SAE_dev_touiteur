@@ -13,6 +13,7 @@ use iutnc\touiteur\actions\AbonnerTagAction;
 use iutnc\touiteur\actions\MurAction;
 use iutnc\touiteur\actions\InfluenceursAction;
 use iutnc\touiteur\actions\StatsAction;
+use iutnc\touiteur\actions\TendancesAction;
 
 class Dispatcher {
 
@@ -52,6 +53,9 @@ class Dispatcher {
             case "influenceurs":
                 $action = new InfluenceursAction();
                 break;
+            case "tendances":
+                $action = new TendancesAction();
+                break;
             case "stats":
                 $action = new StatsAction();
                 break;
@@ -76,8 +80,10 @@ class Dispatcher {
         }
 
         $lienInfluenceurs = "";
+        $lienTendances = "";
         if (($_SESSION["user_role"] ?? "") === "admin") {
             $lienInfluenceurs = '<a href="?action=influenceurs">TOP des influenceurs</a>';
+            $lienTendances = '<a href="?action=tendances">Les tendances</a>';
         }
 
         $lienStatistiques = "";
@@ -104,6 +110,7 @@ class Dispatcher {
                 {$lienPublier}
                 {$navLinks}
                 {$lienInfluenceurs}
+                {$lienTendances}
                 {$lienStatistiques}
                 <span>{$infoUser}</span>
             </nav>
