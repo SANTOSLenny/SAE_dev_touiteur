@@ -16,7 +16,7 @@
 | 12 | Afficher ses abonnés et le score moyen de ses touites | [ ] | — |
 | 13 | Ajouter une image à un touite et l’afficher dans le détail | [ ] | — |
 | 14 | Afficher le top 5 des comptes les plus suivis pour les admins | [x] | Santos |
-| 15 | Afficher le classement des tags les plus utilisés pour les admins | [ ] | — |
+| 15 | Afficher le classement des tags les plus utilisés pour les admins | [X] | Holvec |
 | 16 | Fournir un back-office indépendant pour les administrateurs | [/] | / |
 
 
