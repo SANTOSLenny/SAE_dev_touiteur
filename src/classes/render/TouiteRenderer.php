@@ -14,7 +14,7 @@ class TouiteRenderer {
         $this->auteur = $auteur;
     }
 
-    public function render(int $selecteur): String {
+    public function render(int $selecteur, string $formulaireSuivi = ""): String {
 
         switch($selecteur){
             default:
@@ -23,8 +23,17 @@ class TouiteRenderer {
                 $html = '<div class="touite">';
                 $html .= '<h3><a href="?action=consulter-utilisateur&uid=' . $uid . '">' . $this->auteur . '</a></h3>';
                 
-                $texteDecode = html_entity_decode($this->touite->getTexte(), ENT_QUOTES, 'UTF-8');
-                $texteFormate = preg_replace('/#(\w+)/', '<a href="?action=consulter-tag&tag=$1">#$1</a>', $texteDecode);
+                $texteSecurise = htmlspecialchars(
+                    html_entity_decode($this->touite->getTexte(), ENT_QUOTES, 'UTF-8'),
+                    ENT_QUOTES,
+                    'UTF-8'
+                );
+
+                $texteFormate = preg_replace(
+                    '/(?<!&)#(\w+)/',
+                    '<a href="?action=consulter-tag&tag=$1">#$1</a>',
+                    $texteSecurise
+                );
 
                 $html .= "<p>" . $texteFormate . "</p>";
                 if (isset($_SESSION["user_id"])) {
@@ -46,12 +55,12 @@ class TouiteRenderer {
                     $html .= '<div><p><strong>ID du touite :</strong> ' . $this->touite->getId() . '</p>';
                     $html .= '<p><strong>Date de publication :</strong> ' . $this->touite->getDate() . '</p>';
                     $html .= '<p><strong>Score :</strong> ' . $this->touite->getScore() . '</p></div>';
-                    $html .= '</div>';
                     $html .= '</details>';
                     $html .= '<br>';
                 }
+                $html .= $formulaireSuivi;
                 $html .= "</div>";
-                
+
                 return $html;
         }
     }

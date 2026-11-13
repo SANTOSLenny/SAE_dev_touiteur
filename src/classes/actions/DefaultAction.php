@@ -26,7 +26,6 @@ class DefaultAction extends Action {
 
         $page = min($page, $totalPages);
 
-
         $offset = ($page - 1) * $limite;
 
         $touites = $repository->findTouitesPagines($limite, $offset);
@@ -53,26 +52,24 @@ class DefaultAction extends Action {
                 $affichageAuteur
             );
 
-            $html .= $renderer->render(1);
+            $formulaireSuivi = "";
 
-            if (isset($_SESSION['user_id']) && (int) $_SESSION['user_id'] !== (int) $idAuteur) {
+            if (isset($_SESSION['user_id']) && (int) $_SESSION['user_id'] !== $idAuteur) {
                 $csrfToken = htmlspecialchars(
                     $_SESSION['csrf_token'],
                     ENT_QUOTES,
                     'UTF-8'
                 );
 
-                $html .= "<form action='?action=suivre' method='POST'>
+                $formulaireSuivi = "<form class='formulaire-suivi' action='?action=suivre' method='POST'>
                     <input type='hidden' name='id_auteur' value='{$idAuteur}'>
                     <input type='hidden' name='csrf_token' value='{$csrfToken}'>
                     <button type='submit'>{$libelleBouton}</button>
                 </form>";
+            }
 
-            }   
-                        
-            
+            $html .= $renderer->render(1, $formulaireSuivi);   
         }
-
 
         $html .= "<hr>";
 

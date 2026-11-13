@@ -46,7 +46,7 @@ class MurAction extends Action {
                 $affichageAuteur
             );
 
-            $html .= $renderer->render(1);
+            $formulaireSuivi = "";
 
             if ($idUtilisateurConnecte !== $idAuteur) {
 
@@ -63,12 +63,15 @@ class MurAction extends Action {
                     'UTF-8'
                 );
 
-                $html .= "<form action='?action=suivre' method='POST'>
+                $formulaireSuivi = "<form class='formulaire-suivi' action='?action=suivre' method='POST'>
                     <input type='hidden' name='id_auteur' value='{$idAuteur}'>
                     <input type='hidden' name='csrf_token' value='{$csrfToken}'>
                     <button type='submit'>{$libelleBouton}</button>
                 </form>";
             }
+
+            $html .= $renderer->render(1, $formulaireSuivi);
+
         }
 
         $html .= "<hr>";
