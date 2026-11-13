@@ -6,7 +6,7 @@
 | 2 | Afficher le détail d’un touite | [ ] | — |
 | 3 | Paginer la liste des touites | [ ] | Gioria |
 | 4 | Afficher les touites d’un auteur en cliquant sur son nom | [x] | Santos |
-| 5 | Afficher les touites associés à un tag | [ ] | — |
+| 5 | Afficher les touites associés à un tag | [ ] | Gioria |
 | 6 | Publier un touite | [ ] | — |
 | 7 | Évaluer un touite (+1 ou −1), une seule fois par utilisateur | [ ] | Santos |
 | 8 | Extraire les tags d’un touite et les enregistrer à la publication | [ ] | Gioria |
