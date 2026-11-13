@@ -35,10 +35,8 @@ class TouiteRenderer {
                     $html .= '<button type="submit" name="valeur" value="1">Like +1</button>';
                     $html .= '<button type="submit" name="valeur" value="-1">Dislike -1</button>';
                     $html .= '</form>';
-                    // --- Bouton "Voir plus" avec effet dépliant (accordéon) ---
                     $html .= '<details class="touite-details" style="margin-top: 10px;">';
                     $html .= '<summary style="cursor: pointer; user-select: none;">Voir plus</summary>';
-                    // --- Contenu déplié (avec image) ---
                     if ($this->touite->getImage() !== null) {
                         $imgSrc = htmlspecialchars($this->touite->getImage(), ENT_QUOTES, 'UTF-8');
                         $html .= '<div style="margin-top: 10px;">';
