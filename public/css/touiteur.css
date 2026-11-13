@@ -213,3 +213,41 @@ main th, main td { padding: 12px; text-align: left; border-bottom: 1px solid var
   main > section, main > form:not([action*='suivre']) { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; scroll-behavior: auto !important; transition: none !important; } }
+
+main > .touite:has(+ form[action*="action=suivre"]) {
+    margin-bottom: 0;
+    border-bottom: none;
+    border-radius: 18px 18px 0 0;
+}
+
+main > form[action*="action=suivre"] {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: flex-start;
+
+    margin: 0 0 22px;
+    padding: 0 20px 18px;
+
+    background: #151e33;
+    border: 1px solid #293653;
+    border-top: none;
+    border-radius: 0 0 18px 18px;
+}
+
+main > form[action*="action=suivre"] button {
+    position: static;
+    margin: 0;
+    padding: 9px 16px;
+
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+main > form[action*="action=suivre"] button:hover {
+    filter: brightness(1.15);
+}
