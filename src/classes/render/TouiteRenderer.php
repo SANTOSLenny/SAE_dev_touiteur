@@ -23,13 +23,9 @@ class TouiteRenderer {
                 $html = '<div class="touite">';
                 $html .= '<h3><a href="?action=consulter-utilisateur&uid=' . $uid . '">' . $this->auteur . '</a></h3>';
                 
-                $texteBrut = htmlspecialchars(
-                    $this->touite->getTexte(),
-                    ENT_QUOTES,
-                    'UTF-8'
-                );
-                $texteFormate = preg_replace('/#(\w+)/', '<a href="?action=consulter-tag&tag=$1">#$1</a>', $texteBrut);
-                
+                $texteDecode = html_entity_decode($this->touite->getTexte(), ENT_QUOTES, 'UTF-8');
+                $texteFormate = preg_replace('/#(\w+)/', '<a href="?action=consulter-tag&tag=$1">#$1</a>', $texteDecode);
+
                 $html .= "<p>" . $texteFormate . "</p>";
                 if (isset($_SESSION["user_id"])) {
                     $idTouite = $this->touite->getId();
